@@ -2,7 +2,7 @@ import React from 'react'
 
 export function Loader({ ...props }: React.HTMLAttributes<SVGElement>) {
   return (
-    <div className="flex h-svh items-center justify-center">
+    <div className="flex h-svh items-center justify-center fixed inset-0 z-50  backdrop-blur-md bg-white/30">
       <svg
         {...props}
         xmlns="http://www.w3.org/2000/svg"
