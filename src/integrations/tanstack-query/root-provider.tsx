@@ -1,8 +1,14 @@
 import { QueryClient } from '@tanstack/react-query'
-import superjson from 'superjson'
-import { createTRPCClient, httpBatchStreamLink } from '@trpc/client'
+import superjson, { SuperJSON } from 'superjson'
+import {
+  createTRPCClient,
+  httpBatchStreamLink,
+  isNonJsonSerializable,
+  loggerLink,
+} from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import type { TRPCRouter } from '@/integrations/trpc/routers'
+import type { TRPCCombinedDataTransformer } from '@trpc/server'
 import { TRPCProvider } from '@/integrations/trpc/react'
 
 function getUrl() {
@@ -13,10 +19,33 @@ function getUrl() {
   return `${base}/api/trpc`
 }
 
+export const transformer: TRPCCombinedDataTransformer = {
+  input: {
+    serialize: (obj) => {
+      if (isNonJsonSerializable(obj)) {
+        return obj
+      }
+      return SuperJSON.serialize(obj)
+    },
+    deserialize: (obj) => {
+      if (isNonJsonSerializable(obj)) {
+        return obj
+      }
+      return SuperJSON.deserialize(obj)
+    },
+  },
+  output: SuperJSON,
+}
+
 export const trpcClient = createTRPCClient<TRPCRouter>({
   links: [
+    loggerLink({
+      enabled: (op) =>
+        process.env.NODE_ENV === 'development' ||
+        (op.direction === 'down' && op.result instanceof Error),
+    }),
     httpBatchStreamLink({
-      transformer: superjson,
+      transformer,
       url: getUrl(),
     }),
   ],

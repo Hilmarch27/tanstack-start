@@ -11,4 +11,7 @@ export const todoRouter = {
       },
     ]
   }),
+  getUser: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.user.findMany()
+  }),
 }
