@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { reactStartCookies } from 'better-auth/react-start'
+import { admin } from 'better-auth/plugins'
 import { db } from '@/integrations/drizzle'
 import * as schema from '@/integrations/drizzle/schema'
 import { env } from '@/integrations/env/server'
@@ -18,6 +19,7 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [
+    admin(),
     reactStartCookies(), // make sure this is the last plugin in the array
   ],
 })
