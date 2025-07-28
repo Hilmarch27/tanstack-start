@@ -2,6 +2,12 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { reactStartCookies } from 'better-auth/react-start'
 import { admin } from 'better-auth/plugins'
+import {
+  ac,
+  admin as adminRole,
+  superadmin as superAdminRole,
+  user as userRole,
+} from '@/integrations/auth/permissions'
 import { db } from '@/integrations/drizzle'
 import * as schema from '@/integrations/drizzle/schema'
 import { env } from '@/integrations/env/server'
@@ -19,7 +25,16 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [
-    admin(),
+    admin({
+      defaultRole: 'user',
+      adminRoles: ['admin', 'superadmin'],
+      ac,
+      roles: {
+        user: userRole,
+        admin: adminRole,
+        superadmin: superAdminRole,
+      },
+    }),
     reactStartCookies(), // make sure this is the last plugin in the array
   ],
 })

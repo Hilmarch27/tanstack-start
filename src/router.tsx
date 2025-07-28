@@ -1,4 +1,7 @@
-import { createRouter as createTanstackRouter } from '@tanstack/react-router'
+import {
+  ErrorComponent,
+  createRouter as createTanstackRouter,
+} from '@tanstack/react-router'
 import { routerWithQueryClient } from '@tanstack/react-router-with-query'
 import * as TanstackQuery from '@/integrations/tanstack-query/root-provider'
 
@@ -6,23 +9,38 @@ import * as TanstackQuery from '@/integrations/tanstack-query/root-provider'
 import { routeTree } from '@/routeTree.gen'
 
 import '@/styles.css'
+import { Loader } from '@/components/ui/loader'
 
 // Create a new router instance
 export const createRouter = () => {
+  const queryClient = TanstackQuery.createQueryClient()
+  const serverHelpers = TanstackQuery.createServerHelpers({
+    queryClient,
+  })
   const router = routerWithQueryClient(
     createTanstackRouter({
       routeTree,
       context: {
-        ...TanstackQuery.getContext(),
+        queryClient,
+        trpc: serverHelpers,
       },
       scrollRestoration: true,
       defaultPreloadStaleTime: 0,
-
+      defaultStaleTime: 0,
+      defaultPreload: 'intent',
+      defaultViewTransition: true,
+      defaultPendingComponent: Loader,
+      // defaultNotFoundComponent: NotFound,
+      defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
       Wrap: (props: { children: React.ReactNode }) => {
-        return <TanstackQuery.Provider>{props.children}</TanstackQuery.Provider>
+        return (
+          <TanstackQuery.Provider queryClient={queryClient}>
+            {props.children}
+          </TanstackQuery.Provider>
+        )
       },
     }),
-    TanstackQuery.getContext().queryClient,
+    queryClient,
   )
 
   return router

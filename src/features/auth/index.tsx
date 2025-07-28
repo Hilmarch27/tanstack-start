@@ -11,8 +11,8 @@ export function AuthPage() {
 
   return (
     <div className="flex items-center justify-center h-svh">
-      {/* <AuthForm.Login /> */}
-      <AuthForm.Register />
+      <AuthForm.Login />
+      {/* <AuthForm.Register /> */}
     </div>
   )
 }

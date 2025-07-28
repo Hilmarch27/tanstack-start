@@ -1,12 +1,18 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryCache, QueryClient } from '@tanstack/react-query'
 import superjson, { SuperJSON } from 'superjson'
 import {
   createTRPCClient,
+  httpBatchLink,
   httpBatchStreamLink,
+  httpLink,
   isNonJsonSerializable,
   loggerLink,
+  splitLink,
 } from '@trpc/client'
+import { createIsomorphicFn, createServerFn } from '@tanstack/react-start'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import { getWebRequest } from '@tanstack/react-start/server'
+import { cache } from 'react'
 import type { TRPCRouter } from '@/integrations/trpc/routers'
 import type { TRPCCombinedDataTransformer } from '@trpc/server'
 import { TRPCProvider } from '@/integrations/trpc/react'
@@ -37,6 +43,21 @@ export const transformer: TRPCCombinedDataTransformer = {
   output: SuperJSON,
 }
 
+const getRequestHeaders = createServerFn({ method: 'GET' }).handler(
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async () => {
+    const request = getWebRequest()
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const headers = new Headers(request?.headers)
+
+    return Object.fromEntries(headers)
+  },
+)
+
+const headers = createIsomorphicFn()
+  .client(() => ({}))
+  .server(() => getRequestHeaders())
+
 export const trpcClient = createTRPCClient<TRPCRouter>({
   links: [
     loggerLink({
@@ -48,29 +69,52 @@ export const trpcClient = createTRPCClient<TRPCRouter>({
       transformer,
       url: getUrl(),
     }),
+    splitLink({
+      condition: (op) => isNonJsonSerializable(op.input),
+      true: httpLink({
+        url: getUrl(),
+        transformer,
+        headers,
+      }),
+      false: httpBatchLink({
+        url: getUrl(),
+        transformer,
+        headers,
+      }),
+    }),
   ],
 })
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    dehydrate: { serializeData: superjson.serialize },
-    hydrate: { deserializeData: superjson.deserialize },
-  },
-})
-
-const serverHelpers = createTRPCOptionsProxy({
-  client: trpcClient,
-  queryClient: queryClient,
-})
-
-export function getContext() {
-  return {
-    queryClient,
-    trpc: serverHelpers,
-  }
+export const createQueryClient = () => {
+  return new QueryClient({
+    defaultOptions: {
+      dehydrate: { serializeData: superjson.serialize },
+      hydrate: { deserializeData: superjson.deserialize },
+    },
+    queryCache: new QueryCache(),
+  })
+}
+export const createServerHelpers = ({
+  queryClient,
+}: {
+  queryClient: QueryClient
+}) => {
+  const serverHelpers = createTRPCOptionsProxy({
+    client: trpcClient,
+    queryClient: queryClient,
+  })
+  return serverHelpers
 }
 
-export function Provider({ children }: { children: React.ReactNode }) {
+export const getQueryClient = cache(createQueryClient)
+
+export function Provider({
+  children,
+  queryClient,
+}: {
+  children: React.ReactNode
+  queryClient: QueryClient
+}) {
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       {children}
