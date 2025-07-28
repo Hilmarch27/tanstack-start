@@ -9,7 +9,9 @@ export const Route = createFileRoute('/(admin)/users/')({
 
 function RouteComponent() {
   const trpc = useTRPC()
-  const { data } = useQuery(trpc.users.list.queryOptions({}))
+  const { data, error } = useQuery(trpc.users.list.queryOptions({}))
   console.log('data', data)
+
+  if (error) console.log('error', error.message)
   return <UserPage />
 }

@@ -13,6 +13,7 @@ import { createIsomorphicFn, createServerFn } from '@tanstack/react-start'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { getWebRequest } from '@tanstack/react-start/server'
 import { cache } from 'react'
+import { toast } from 'sonner'
 import type { TRPCRouter } from '@/integrations/trpc/routers'
 import type { TRPCCombinedDataTransformer } from '@trpc/server'
 import { TRPCProvider } from '@/integrations/trpc/react'
@@ -91,7 +92,15 @@ export const createQueryClient = () => {
       dehydrate: { serializeData: superjson.serialize },
       hydrate: { deserializeData: superjson.deserialize },
     },
-    queryCache: new QueryCache(),
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        // 🎉 only show error toasts if we already have data in the cache
+        // which indicates a failed background update
+        if (query.state.data !== undefined) {
+          toast.error(`Something went wrong: ${error.message}`)
+        }
+      },
+    }),
   })
 }
 export const createServerHelpers = ({
