@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UserPage } from '@/features/users'
 import { useTRPC } from '@/integrations/trpc/react'
 
-export const Route = createFileRoute('/(admin)/users/')({
+export const Route = createFileRoute('/_admin/users/')({
   component: RouteComponent,
 })
 

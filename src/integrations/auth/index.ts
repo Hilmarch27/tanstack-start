@@ -13,6 +13,14 @@ import * as schema from '@/integrations/drizzle/schema'
 import { env } from '@/integrations/env/server'
 
 export const auth = betterAuth({
+  socialProviders: {
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      accessType: 'offline',
+      prompt: 'select_account+consent',
+    },
+  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema,

@@ -11,18 +11,24 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
+import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo.start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo.start.api-request'
-import { Route as adminUsersRouteImport } from './routes/(admin)/users.'
+import { Route as AdminUsersRouteImport } from './routes/_admin/users.'
 import { ServerRoute as ApiDemoNamesServerRouteImport } from './routes/api/demo-names'
 import { ServerRoute as ApiTrpcSplatServerRouteImport } from './routes/api/trpc.$'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
 const rootServerRouteImport = createServerRootRoute()
 
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -32,6 +38,11 @@ const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -48,10 +59,10 @@ const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
   path: '/demo/start/api-request',
   getParentRoute: () => rootRouteImport,
 } as any)
-const adminUsersRoute = adminUsersRouteImport.update({
-  id: '/(admin)/users/',
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users/',
   path: '/users/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const ApiDemoNamesServerRoute = ApiDemoNamesServerRouteImport.update({
   id: '/api/demo-names',
@@ -72,25 +83,29 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
+  '/dashboard': typeof AdminDashboardRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/users': typeof adminUsersRoute
+  '/users': typeof AdminUsersRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
+  '/dashboard': typeof AdminDashboardRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/users': typeof adminUsersRoute
+  '/users': typeof AdminUsersRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_admin': typeof AdminRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
+  '/_admin/dashboard': typeof AdminDashboardRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/(admin)/users/': typeof adminUsersRoute
+  '/_admin/users/': typeof AdminUsersRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
 }
@@ -99,6 +114,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/dashboard'
     | '/demo/tanstack-query'
     | '/users'
     | '/demo/start/api-request'
@@ -107,6 +123,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/dashboard'
     | '/demo/tanstack-query'
     | '/users'
     | '/demo/start/api-request'
@@ -114,18 +131,20 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_admin'
     | '/(auth)/login'
+    | '/_admin/dashboard'
     | '/demo/tanstack-query'
-    | '/(admin)/users/'
+    | '/_admin/users/'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  adminUsersRoute: typeof adminUsersRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
 }
@@ -161,6 +180,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -174,6 +200,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/tanstack-query'
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_admin/dashboard': {
+      id: '/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/(auth)/login': {
       id: '/(auth)/login'
@@ -196,12 +229,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartApiRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(admin)/users/': {
-      id: '/(admin)/users/'
+    '/_admin/users/': {
+      id: '/_admin/users/'
       path: '/users'
       fullPath: '/users'
-      preLoaderRoute: typeof adminUsersRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
   }
 }
@@ -231,11 +264,25 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminUsersRoute: AdminUsersRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  adminUsersRoute: adminUsersRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
 }
