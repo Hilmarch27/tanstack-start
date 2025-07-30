@@ -8,6 +8,27 @@
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
-    "typescript.preferences.importModuleSpecifier": "non-relative",
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "biome.enabled": false,
+  "editor.formatOnSave": true,
+
+  // tabs
+  "workbench.activityBar.location": "hidden",
+  "workbench.editor.showTabs": "single",
+  "breadcrumbs.enabled": false,
+
+  // sidebar and file explorer
+  "workbench.sideBar.location": "right",
+  "workbench.tree.enableStickyScroll": false,
+  "workbench.tree.indent": 8,
+  "explorer.compactFolders": false,
+
+  // ui style
+  "window.zoomLevel": 2,
+  "editor.fontSize": 12,
+  "editor.fontLigatures": true,
+  "editor.lineHeight": 2.5,
+  "workbench.colorTheme": "Monospace Dark",
+  "workbench.iconTheme": "monospace-icons"
 }

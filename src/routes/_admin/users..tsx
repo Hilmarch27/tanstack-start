@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { UserPage } from '@/features/users'
+import { UserPage } from '@/features/admin/users'
 import { useTRPC } from '@/integrations/trpc/react'
 
 export const Route = createFileRoute('/_admin/users/')({

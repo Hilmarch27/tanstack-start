@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
+import { ThemeProvider } from 'next-themes'
 import TanStackQueryLayout from '../integrations/tanstack-query/layout.tsx'
 
 import appCss from '../styles.css?url'
@@ -45,17 +46,24 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   notFoundComponent: () => <h1>Not Found</h1>,
   component: () => (
     <RootDocument>
-      <Toaster />
-      <Outlet />
-      <TanStackRouterDevtools />
-      <TanStackQueryLayout />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <Toaster />
+        <Outlet />
+        <TanStackRouterDevtools />
+        <TanStackQueryLayout />
+      </ThemeProvider>
     </RootDocument>
   ),
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

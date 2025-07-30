@@ -29,10 +29,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-auto p-0 hover:bg-transparent border-secondary"
-        >
+        <Button variant="outline" className="border-accent-foreground rounded-full p-0">
           <Avatar>
             <AvatarImage
               src="https://github.com/Hilmarch27.png"

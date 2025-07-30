@@ -7,7 +7,7 @@ export function SignInGoogle() {
       action={async () => {
         await authClient.signIn.social({
           provider: 'google',
-          callbackURL: '/',
+          callbackURL: '/dashboard',
         })
       }}
     >

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev --host --port 3000",
     "start": "node .output/server/index.mjs",
     "build": "vite build",
     "serve": "vite preview",
@@ -25,6 +25,7 @@
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-navigation-menu": "^1.2.13",
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
@@ -49,6 +50,7 @@
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.3",
     "lucide-react": "^0.533.0",
+    "nanoid": "^5.1.5",
     "next-themes": "^0.4.6",
     "pg": "^8.16.3",
     "postcss": "^8.5.6",
@@ -59,6 +61,7 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7",
+    "vaul": "^1.1.2",
     "vite": "6.3.3",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^3.24.2"
